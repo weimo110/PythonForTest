@@ -1,0 +1,76 @@
+# -*- coding: utf-8 -*-
+
+import requests
+import json
+import os
+import base64
+import urllib3
+
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
+
+def request_detect(object_id, image_base64, info, grep):
+    data = {"task_id": "123456",
+            "timestamp": "1581675600",
+            "object_list": [{"object_id": object_id, "max": 15, "min": 1, "critical_info": info}],
+            "image_base64": image_base64.decode('utf-8')
+            }
+    token = get_token()
+    print(token)
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
+    }
+
+    URL = 'https://10.137.106.120:8343/qcheck/api/v1/' + grep + '/detect'
+    # print(URL)
+    resp = requests.post(url=URL,
+                         headers=headers,
+                         data=json.dumps(data),
+                         verify=False)
+    print('==API response===>>>', json.loads(resp.content.decode('utf-8')))
+    # print('==API response===>>>', resp.text)
+    return resp
+
+
+def get_token():
+    url = 'https://:8343/v1/apigw/oauth2/token'
+    headers = {
+        'content-type': 'application/x-www-form-urlencoded',
+    }
+    data = {
+        'grant_type': 'client_credentials',
+        'client_id': '',
+        'client_secret': '',
+        'scope': 'default',
+    }
+    resp = requests.post(url, headers=headers, data=data, verify=False)
+    print('--token status_code--', resp.status_code)
+    # print(resp.json())
+    return resp.json()["access_token"]
+
+
+def img2base64(img_path):
+    with open(img_path, 'rb') as fr:
+        base64_data = base64.b64encode(fr.read())
+
+    return base64_data
+
+
+def main(picpath, filename, info, grep):
+    img_path = os.path.join(picpath, filename)
+    if img_path.endswith('.jpg'):
+        base64_data = img2base64(img_path)
+        object_id = filename.strip('.jpg')
+        return request_detect(object_id, base64_data, info, grep)
+
+
+if __name__ == '__main__':
+    subpicpath = 'image'
+    subresultpath = 'new'
+    picpath = os.path.join(r'D:\!06', subpicpath)
+    print(picpath)
+    # filenames = os.listdir(picpath)
+    filename = '.jpg'
+
+    # main(picpath, filename, info, grep)
