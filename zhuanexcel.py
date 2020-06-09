@@ -1,8 +1,8 @@
 import csv
 import xlwt
 
-c_path = r"C:\Users\wwx879828\Desktop\changwen.txt"
-x_path = r"C:\Users\wwx879828\Desktop\长稳.xls"
+c_path = r"C:\Users\Desktop\changwen.txt"
+x_path = r"C:\Users\Desktop\长稳.xls"
 
 def csv_to_xlsx():
     with open(c_path, 'r', encoding='utf-8') as f:
