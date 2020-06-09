@@ -21,7 +21,7 @@ global:
 scrape_configs:
   - job_name: cadvisor
     static_configs:
-    - targets: ['10.137.106.57:7900','10.137.106.80:7900','10.137.106.64:7900','10.137.106.72:7900', '10.137.106.55:7900','10.137.6.117:7900', '10.137.106.223:7900', '10.137.106.85:7900', '10.137.106.42:7900']
+    - targets: [':7900',':7900',':7900',':7900', ':7900',':7900', ':7900', ':7900', ':7900']
 EOF
 
 ps -ef | grep prometheus
@@ -32,7 +32,7 @@ nohup /data/prometheus/2.2.1/prometheus \
     --storage.tsdb.retention=30d \
     --storage.tsdb.path "/data/prometheus/prometheus.data" >> /data/prometheus/prometheus.log  2>&1 &
 
-http://10.137.106.96:9090/targets
+http://1.1.1.1:9090/targets
 
 mkdir -p /data/grafana/
 cd  /data/grafana/
@@ -42,6 +42,6 @@ mv grafana-5.0.4 5.0.4
 cd /data/grafana/5.0.4
 nohup ./bin/grafana-server web >> /data/grafana/grafana-server-web.log  2>&1 &
 
-curl http://10.133.230.115:4194/metrics
+curl http://1.1.1.1:4194/metrics
 
-iptables -t nat -A PREROUTING -p tcp -d 10.137.106.37 --dport 7900 -j DNAT --to 127.0.0.1:4194
+iptables -t nat -A PREROUTING -p tcp -d 2.2.2.2 --dport 7900 -j DNAT --to 127.0.0.1:4194
